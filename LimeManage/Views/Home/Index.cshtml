@@ -1,0 +1,333 @@
+﻿@{
+    ViewBag.Title = "首页";
+    var F = @Html.F();
+}
+
+@section head {
+
+    <link type="text/css" rel="stylesheet" href="~/res/css/index.css" />
+
+}
+
+@section body {
+
+    <div id="header" class="ui-widget-header f-mainheader">
+        <table>
+            <tr>
+                <td>
+                    @(F.Button()
+                        .OnClientClick("window.open('/','_blank');")
+                        .EnableDefaultCorner(false)
+                        .EnableDefaultState(false)
+                        .IconFont(IconFont.Home)
+                        .IconAlign(IconAlign.Top)
+                        .ToolTip("首页")
+                        .ID("btnHomePage")
+                        .CssClass("icononlyaction")
+                    )
+                    <a class="logo" href="@Url.Content("~/")" title="Lime项目管理系统">
+                        Lime项目管理系统
+                    </a>
+                </td>
+                <td style="text-align: right;">
+
+                    @(F.Button()
+                        .EnableDefaultCorner(false)
+                        .EnableDefaultState(false)
+                        .IconFont(IconFont.Bank)
+                        .IconAlign(IconAlign.Left)
+                        .Text("更换主题")
+                        .ID("btnThemeSelect")
+                        .CssClass("icontopaction themes")
+                        .Listener("click", "onThemeSelectClick")
+                    )
+
+                    @(F.Button()
+                        .EnableDefaultCorner(false)
+                        .EnableDefaultState(false)
+                        .IconAlign(IconAlign.Left)
+                        .IconUrl(Url.Content("~/res/images/my_face_80.jpg"))
+                        .Text((String)Session["username"])
+                        .CssClass("userpicaction")
+                        .Menu(F.Menu()
+                            .Items(
+                                F.MenuButton()
+                                    .IconFont(IconFont.User)
+                                    .Text("个人信息")
+                                    .Listener("click", "F.alert('尚未实现');"),
+                                F.MenuSeparator(),
+                                F.MenuButton()
+                                    .IconFont(IconFont.SignOut)
+                                    .Text("安全退出")
+                                    .OnClick(Url.Action("Logout","Session"))
+                            )
+                        )
+                    )
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="maincontent">
+        <style>
+            .navitable {
+                border-collapse: collapse;
+                border-spacing: 0;
+            }
+            .navitable td {
+                padding: 10px;
+                text-align: center;
+                position: relative;
+            }
+
+            .navitable .f-btn {
+                width: 100px;
+            }
+
+            .navitable .f-btn-icon {
+                width: 56px;
+                height: 56px;
+                padding: 5px;
+            }
+
+            .navitable .myicon {
+                width: 40px;
+                font-size: 30px;
+                opacity: .5;
+                filter: alpha(opacity=50);
+                text-align: center;
+            }
+
+            .navitable .td-icon-down {
+                height: 60px;
+            }
+
+            .navitable .td-icon-down .myicon {
+                position: absolute;
+                left: 50%;
+                margin-left: -20px;
+                top: 40px;
+            }
+        </style>
+        <script>
+            function newProject(event) {
+               
+                
+                F.ui.mainTabStrip.addTab({
+                    id: "mainTabStrip_fNewProject",
+                    title: "新建项目",
+                    iframe: true,
+                    iframeUrl: "@Url.Action("NewProject","Manage")",
+                    closable: true
+                });
+            }
+
+            function newInvoice(event) {
+               
+                
+                F.ui.mainTabStrip.addTab({
+                    id: "mainTabStrip_fNewInvoice",
+                    title: "开发票",
+                    iframe: true,
+                    iframeUrl: "@Url.Action("NewInvoice","Manage")",
+                    closable: true
+            });
+            }
+        </script>
+        <table class="navitable">
+            <tbody>
+                <tr>
+                    <td rowspan="2">
+                        @(F.Button()
+                        .ID("NewProject")
+                        .IconAlign(FineUIMvc.IconAlign.Top)
+                        .Icon(FineUIMvc.Icon.ApplicationAdd)
+                        .Text("新建项目")
+                        .Listener("click", "newProject")
+                        )
+                    </td>
+                    <td rowspan="2"><i class="ui-icon f-icon-long-arrow-right myicon"></i></td>
+                    <td>
+                        @(F.Button()
+                        .ID("NewInvoice")
+                        .OnClientClick("top.addExampleTabByHref('" + Url.Content("~/") + "');")
+                        .IconAlign(FineUIMvc.IconAlign.Top)
+                        .Icon(FineUIMvc.Icon.ApplicationFormEdit)
+                        .Listener("click", "newInvoice")
+                        .Text("开发票")
+                        )
+                    </td>
+                    <td rowspan="2"><i class="ui-icon f-icon-long-arrow-right myicon"></i></td>
+                    <td rowspan="2">
+                        @(F.Button()
+                        .ID("SerchProject")
+                        .OnClientClick("top.addExampleTabByHref('" + Url.Content("~/") + "');")
+                        .IconAlign(FineUIMvc.IconAlign.Top)
+                        .Icon(FineUIMvc.Icon.SystemSearch)
+                        .Text("查项目")
+                        )
+                    </td>
+                    <td rowspan="2"><i class="ui-icon f-icon-long-arrow-right myicon"></i></td>
+                    <td>
+                        @(F.Button()
+                        .ID("SerchInvoice")
+                        .OnClientClick("top.addExampleTabByHref('" + Url.Content("~/") + "');")
+                        .IconAlign(FineUIMvc.IconAlign.Top)
+                        .Icon(FineUIMvc.Icon.SystemSearch)
+                        .Text("查发票")
+                        )
+                    </td>
+                    <td rowspan="2"><i class="ui-icon f-icon-long-arrow-right myicon"></i></td>
+                    <td rowspan="2">
+                        @(F.Button()
+                        .ID("Tongji")
+                        .OnClientClick("top.addExampleTabByHref('" + Url.Content("~/") + "');")
+                        .IconAlign(FineUIMvc.IconAlign.Top)
+                        .Icon(FineUIMvc.Icon.TableMultiple)
+                        .Text("收支统计")
+                        )
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @(F.Button()
+                        .ID("Cost")
+                        .OnClientClick("top.addExampleTabByHref('" + Url.Content("~/") + "');")
+                        .IconAlign(FineUIMvc.IconAlign.Top)
+                        .Icon(FineUIMvc.Icon.ApplicationFormEdit)
+                        .Text("开支出")
+                        )
+                    </td>
+                    <td>
+                        @(F.Button()
+                        .ID("SerchCost")
+                        .OnClientClick("top.addExampleTabByHref('" + Url.Content("~/") + "');")
+                        .IconAlign(FineUIMvc.IconAlign.Top)
+                        .Icon(FineUIMvc.Icon.SystemSearch)
+                        .Text("查支出")
+                        )
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    @(F.RegionPanel()
+        .ID("RegionPanel1")
+        .ShowBorder(false)
+        .IsViewPort(true)
+        .CssClass("mainpanel")
+        .Regions(
+            F.Region()
+                .ID("Region1")
+                .ShowBorder(false)
+                .ShowHeader(false)
+                .RegionPosition(Position.Top)
+                .CssClass("topregion bgpanel")
+                .Layout(LayoutType.Fit)
+                .ContentEl("#header"),
+            F.Region()
+                .ID("Region2")
+                .RegionSplit(true)
+                .RegionSplitWidth(2)
+                .RegionSplitIcon(false)
+                .Width(200)
+                .ShowHeader(false)
+                .Title("菜单")
+                .EnableCollapse(true)
+                .Layout(LayoutType.Fit)
+                .RegionPosition(Position.Left)
+                .CssClass("leftregion bgpanel")
+                .Items(
+                    F.Tree()
+                        .ShowBorder(false)
+                        .ShowHeader(false)
+                        .ID("treeMenu")
+                        .Nodes(
+                            F.TreeNode()
+                                .Text("操作")
+                                .Expanded(true)
+                                .Nodes(
+                                    F.TreeNode()
+                                        .Text("开始页面")
+                                        .NavigateUrl("~/Home/Hello"),
+                                    F.TreeNode()
+                                        .Text("新建项目")
+                                        .NavigateUrl("~/Manage/NewProject")
+                                        .NodeID("fNewProject"),
+                                    F.TreeNode()
+                                        .Text("开发票")
+                                        .NavigateUrl("~/Manage/NewInvoice")
+                                        .NodeID("fNewInvoice")
+                                )
+                        )
+                ),
+            F.Region()
+                .ID("mainRegion")
+                .ShowHeader(false)
+                .Layout(LayoutType.Fit)
+                .RegionPosition(Position.Center)
+                .CssClass("centerregion")
+                .Items(
+                    F.TabStrip()
+                        .ID("mainTabStrip")
+                        .EnableTabCloseMenu(true)
+                        .ShowBorder(false)
+                        .Tabs(
+                            F.Tab()
+                                .ID("Tab1")
+                                .Title("首页")
+                                .BodyPadding(10)
+                                .Layout(LayoutType.Fit)
+                                .Icon(Icon.House)
+                                .ContentEl("#maincontent")
+                        )
+                )
+        )
+    )
+
+
+    @(F.Window()
+        .Hidden(true)
+        .EnableResize(true)
+        .EnableMaximize(true)
+        .EnableClose(true)
+        .Height(600)
+        .Width(1020)
+        .IsModal(true)
+        .ClearIFrameAfterClose(false)
+        .IFrameUrl(Url.Content("~/Home/Themes"))
+        .EnableIFrame(true)
+        .Title("主题仓库")
+        .ID("windowThemeRoller")
+    )
+}
+
+@section script {
+
+    <script>
+
+        // 点击主题仓库
+        function onThemeSelectClick(event) {
+            F.ui.windowThemeRoller.show();
+        }
+
+        // 页面控件初始化完毕后，会调用用户自定义的onReady函数
+        F.ready(function () {
+
+            // 初始化主框架中的树和选项卡互动，以及地址栏的更新
+            // treeMenu： 主框架中的树控件实例，或者内嵌树控件的手风琴控件实例
+            // mainTabStrip： 选项卡实例
+            // updateHash: 切换Tab时，是否更新地址栏Hash值（默认值：true）
+            // refreshWhenExist： 添加选项卡时，如果选项卡已经存在，是否刷新内部IFrame（默认值：false）
+            // refreshWhenTabChange: 切换选项卡时，是否刷新内部IFrame（默认值：false）
+            // maxTabCount: 最大允许打开的选项卡数量
+            // maxTabMessage: 超过最大允许打开选项卡数量时的提示信息
+            F.initTreeTabStrip(F.ui.treeMenu, F.ui.mainTabStrip, {
+                maxTabCount: 10,
+                maxTabMessage: '请先关闭一些选项卡（最多允许打开 10 个）！'
+            });
+
+        });
+    </script>
+}

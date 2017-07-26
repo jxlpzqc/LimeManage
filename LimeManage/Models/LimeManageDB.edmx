@@ -1,0 +1,490 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="ProjectManagementModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2005" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="City">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="ProvinceID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="County">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="CityID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Invoice">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="ProjectID" Type="int" Nullable="false" />
+          <Property Name="Date" Type="datetime" Nullable="false" />
+          <Property Name="Money" Type="int" Nullable="false" />
+          <Property Name="Type" Type="nvarchar" MaxLength="10" />
+          <Property Name="TaxPayed" Type="int" Nullable="false" />
+          <Property Name="PayMethod" Type="nvarchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="PartyB">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="CountyID" Type="int" Nullable="false" />
+          <Property Name="PartyAName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="PartyBID" Type="int" Nullable="false" />
+          <Property Name="ResponsiblePerson" Type="varchar" MaxLength="20" />
+          <Property Name="ContactPhone" Type="varchar" MaxLength="20" />
+          <Property Name="Date" Type="datetime" Nullable="false" />
+          <Property Name="Money" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Province">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="10" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserName" />
+          </Key>
+          <Property Name="UserName" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Password" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="UserClassID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserClass">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Permission" Type="text" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_City_Province">
+          <End Role="Province" Type="Self.Province" Multiplicity="1" />
+          <End Role="City" Type="Self.City" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Province">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="City">
+              <PropertyRef Name="ProvinceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_County_City">
+          <End Role="City" Type="Self.City" Multiplicity="1" />
+          <End Role="County" Type="Self.County" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="City">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="County">
+              <PropertyRef Name="CityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Invoice_Project1">
+          <End Role="Project" Type="Self.Project" Multiplicity="1" />
+          <End Role="Invoice" Type="Self.Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Invoice">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Project_County">
+          <End Role="County" Type="Self.County" Multiplicity="1" />
+          <End Role="Project" Type="Self.Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="County">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Project">
+              <PropertyRef Name="CountyID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Project_PartyB">
+          <End Role="PartyB" Type="Self.PartyB" Multiplicity="1" />
+          <End Role="Project" Type="Self.Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartyB">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Project">
+              <PropertyRef Name="PartyBID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_UserClass">
+          <End Role="UserClass" Type="Self.UserClass" Multiplicity="1" />
+          <End Role="User" Type="Self.User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserClass">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="User">
+              <PropertyRef Name="UserClassID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ProjectManagementModelStoreContainer">
+          <EntitySet Name="City" EntityType="Self.City" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="County" EntityType="Self.County" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Invoice" EntityType="Self.Invoice" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PartyB" EntityType="Self.PartyB" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Project" EntityType="Self.Project" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Province" EntityType="Self.Province" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserClass" EntityType="Self.UserClass" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_City_Province" Association="Self.FK_City_Province">
+            <End Role="Province" EntitySet="Province" />
+            <End Role="City" EntitySet="City" />
+          </AssociationSet>
+          <AssociationSet Name="FK_County_City" Association="Self.FK_County_City">
+            <End Role="City" EntitySet="City" />
+            <End Role="County" EntitySet="County" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Invoice_Project1" Association="Self.FK_Invoice_Project1">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="Invoice" EntitySet="Invoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Project_County" Association="Self.FK_Project_County">
+            <End Role="County" EntitySet="County" />
+            <End Role="Project" EntitySet="Project" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Project_PartyB" Association="Self.FK_Project_PartyB">
+            <End Role="PartyB" EntitySet="PartyB" />
+            <End Role="Project" EntitySet="Project" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_UserClass" Association="Self.FK_User_UserClass">
+            <End Role="UserClass" EntitySet="UserClass" />
+            <End Role="User" EntitySet="User" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ProjectManagementModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="City">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ProvinceID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Province" Relationship="Self.FK_City_Province" FromRole="City" ToRole="Province" />
+          <NavigationProperty Name="County" Relationship="Self.FK_County_City" FromRole="City" ToRole="County" />
+        </EntityType>
+        <EntityType Name="County">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CityID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="City" Relationship="Self.FK_County_City" FromRole="County" ToRole="City" />
+          <NavigationProperty Name="Project" Relationship="Self.FK_Project_County" FromRole="County" ToRole="Project" />
+        </EntityType>
+        <EntityType Name="Invoice">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="ProjectID" Type="Int32" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Money" Type="Int32" Nullable="false" />
+          <Property Name="Type" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="TaxPayed" Type="Int32" Nullable="false" />
+          <Property Name="PayMethod" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Project" Relationship="Self.FK_Invoice_Project1" FromRole="Invoice" ToRole="Project" />
+        </EntityType>
+        <EntityType Name="PartyB">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Project" Relationship="Self.FK_Project_PartyB" FromRole="PartyB" ToRole="Project" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CountyID" Type="Int32" Nullable="false" />
+          <Property Name="PartyAName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PartyBID" Type="Int32" Nullable="false" />
+          <Property Name="ResponsiblePerson" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="ContactPhone" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Money" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="County" Relationship="Self.FK_Project_County" FromRole="Project" ToRole="County" />
+          <NavigationProperty Name="Invoice" Relationship="Self.FK_Invoice_Project1" FromRole="Project" ToRole="Invoice" />
+          <NavigationProperty Name="PartyB" Relationship="Self.FK_Project_PartyB" FromRole="Project" ToRole="PartyB" />
+        </EntityType>
+        <EntityType Name="Province">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="City" Relationship="Self.FK_City_Province" FromRole="Province" ToRole="City" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserName" />
+          </Key>
+          <Property Name="UserName" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="UserClassID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="UserClass" Relationship="Self.FK_User_UserClass" FromRole="User" ToRole="UserClass" />
+        </EntityType>
+        <EntityType Name="UserClass">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Permission" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="Self.FK_User_UserClass" FromRole="UserClass" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_City_Province">
+          <End Role="Province" Type="Self.Province" Multiplicity="1" />
+          <End Role="City" Type="Self.City" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Province">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="City">
+              <PropertyRef Name="ProvinceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_County_City">
+          <End Role="City" Type="Self.City" Multiplicity="1" />
+          <End Role="County" Type="Self.County" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="City">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="County">
+              <PropertyRef Name="CityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Project_County">
+          <End Role="County" Type="Self.County" Multiplicity="1" />
+          <End Role="Project" Type="Self.Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="County">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Project">
+              <PropertyRef Name="CountyID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Invoice_Project1">
+          <End Role="Project" Type="Self.Project" Multiplicity="1" />
+          <End Role="Invoice" Type="Self.Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Invoice">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Project_PartyB">
+          <End Role="PartyB" Type="Self.PartyB" Multiplicity="1" />
+          <End Role="Project" Type="Self.Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartyB">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Project">
+              <PropertyRef Name="PartyBID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_UserClass">
+          <End Role="UserClass" Type="Self.UserClass" Multiplicity="1" />
+          <End Role="User" Type="Self.User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserClass">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="User">
+              <PropertyRef Name="UserClassID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ProjectManagementEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="City" EntityType="Self.City" />
+          <EntitySet Name="County" EntityType="Self.County" />
+          <EntitySet Name="Invoice" EntityType="Self.Invoice" />
+          <EntitySet Name="PartyB" EntityType="Self.PartyB" />
+          <EntitySet Name="Project" EntityType="Self.Project" />
+          <EntitySet Name="Province" EntityType="Self.Province" />
+          <EntitySet Name="User" EntityType="Self.User" />
+          <EntitySet Name="UserClass" EntityType="Self.UserClass" />
+          <AssociationSet Name="FK_City_Province" Association="Self.FK_City_Province">
+            <End Role="Province" EntitySet="Province" />
+            <End Role="City" EntitySet="City" />
+          </AssociationSet>
+          <AssociationSet Name="FK_County_City" Association="Self.FK_County_City">
+            <End Role="City" EntitySet="City" />
+            <End Role="County" EntitySet="County" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Project_County" Association="Self.FK_Project_County">
+            <End Role="County" EntitySet="County" />
+            <End Role="Project" EntitySet="Project" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Invoice_Project1" Association="Self.FK_Invoice_Project1">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="Invoice" EntitySet="Invoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Project_PartyB" Association="Self.FK_Project_PartyB">
+            <End Role="PartyB" EntitySet="PartyB" />
+            <End Role="Project" EntitySet="Project" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_UserClass" Association="Self.FK_User_UserClass">
+            <End Role="UserClass" EntitySet="UserClass" />
+            <End Role="User" EntitySet="User" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ProjectManagementModelStoreContainer" CdmEntityContainer="ProjectManagementEntities">
+          <EntitySetMapping Name="City">
+            <EntityTypeMapping TypeName="ProjectManagementModel.City">
+              <MappingFragment StoreEntitySet="City">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ProvinceID" ColumnName="ProvinceID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="County">
+            <EntityTypeMapping TypeName="ProjectManagementModel.County">
+              <MappingFragment StoreEntitySet="County">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="CityID" ColumnName="CityID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Invoice">
+            <EntityTypeMapping TypeName="ProjectManagementModel.Invoice">
+              <MappingFragment StoreEntitySet="Invoice">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Money" ColumnName="Money" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="TaxPayed" ColumnName="TaxPayed" />
+                <ScalarProperty Name="PayMethod" ColumnName="PayMethod" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PartyB">
+            <EntityTypeMapping TypeName="ProjectManagementModel.PartyB">
+              <MappingFragment StoreEntitySet="PartyB">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Project">
+            <EntityTypeMapping TypeName="ProjectManagementModel.Project">
+              <MappingFragment StoreEntitySet="Project">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="CountyID" ColumnName="CountyID" />
+                <ScalarProperty Name="PartyAName" ColumnName="PartyAName" />
+                <ScalarProperty Name="PartyBID" ColumnName="PartyBID" />
+                <ScalarProperty Name="ResponsiblePerson" ColumnName="ResponsiblePerson" />
+                <ScalarProperty Name="ContactPhone" ColumnName="ContactPhone" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Money" ColumnName="Money" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Province">
+            <EntityTypeMapping TypeName="ProjectManagementModel.Province">
+              <MappingFragment StoreEntitySet="Province">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="User">
+            <EntityTypeMapping TypeName="ProjectManagementModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="UserClassID" ColumnName="UserClassID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserClass">
+            <EntityTypeMapping TypeName="ProjectManagementModel.UserClass">
+              <MappingFragment StoreEntitySet="UserClass">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Permission" ColumnName="Permission" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="无" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

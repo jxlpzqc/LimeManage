@@ -1,0 +1,134 @@
+﻿
+@{
+    ViewBag.Title = "开发票";
+    var F = Html.F();
+}
+
+@section body{
+    @(F.Form() 
+    .ID("mainForm")
+    .LabelAlign(LabelAlign.Right)
+    .MessageTarget(MessageTarget.Side)
+    .BodyPadding(5)
+    .Width(500)
+    .Title("开发票")
+    .AutoScroll(true)
+    .Items(
+        F.TextBox()
+        .ID("tbID")
+        .Label("发票编号")
+        .CssClass("marginr")
+        .Required(true)
+        .ShowRedStar(true),
+        F.DropDownList()
+        .ID("ddlProject")
+        .Label("项目")
+        .ShowRedStar(true)
+        .Required(true),
+        F.DatePicker()
+        .ID("dpDate")
+        .Label("开票日期")
+        .ShowRedStar(true)
+        .SelectedDate(System.DateTime.Now),
+        F.Panel()
+        .Layout(LayoutType.HBox)
+        .BoxConfigAlign(BoxLayoutAlign.Stretch)
+        .ShowHeader(false)
+        .ShowBorder(false)
+        .Items(
+            F.NumberBox()
+            .ID("nbMoney")
+            .Label("金额")
+            .ShowRedStar(true)
+            .NoDecimal(true)
+            .NoNegative(true)
+            .Required(true)
+            .BoxFlex(1),
+            F.DropDownList()
+            .ID("ddlMoneyUnit")            
+            .Width(60)
+            .Items(
+                F.ListItem()
+                .Text("元")
+                .Value("yuan"),
+                F.ListItem()
+                .Text("万元")
+                .Value("wan")
+                .Selected(true),
+                F.ListItem()
+                .Text("亿元")
+                .Value("yi")
+            )
+        ),
+        F.DropDownList()
+        .ID("ddlType")
+        .Label("发票类型")
+        .ShowRedStar(true)
+        .Required(true)
+        .Items(
+            new ListItem("普票","common",true),
+            new ListItem("专票","special")
+        ),
+        F.Panel()
+        .Layout(LayoutType.HBox)
+        .BoxConfigAlign(BoxLayoutAlign.Stretch)
+        .ShowHeader(false)
+        .ShowBorder(false)
+        .Items(
+            F.NumberBox()
+            .ID("nbTaxPayed")
+            .Label("已交税款")
+            .ShowRedStar(true)
+            .NoDecimal(true)
+            .NoNegative(true)
+            .Required(true)
+            .BoxFlex(1),
+            F.DropDownList()
+            .ID("ddlTaxUnit")
+            .Width(60)
+            .Items(
+                F.ListItem()
+                .Text("元")
+                .Value("yuan"),
+                F.ListItem()
+                .Text("万元")
+                .Value("wan")
+                .Selected(true),
+                F.ListItem()
+                .Text("亿元")
+                .Value("yi")
+            )
+        ),
+        F.DropDownList()
+        .ID("ddlPayMethod")
+        .Label("交款方式")
+        .ShowRedStar(true)
+        .Required(true)
+        .Items(
+            new ListItem("现金","cash",true),
+            new ListItem("刷卡","card"),
+            new ListItem("挂账","account")
+        ),
+        F.Panel()
+        .ShowBorder(false)
+        .ShowHeader(false)
+        .Layout(LayoutType.HBox)
+        .Items(
+            F.Button()
+            .ValidateForms("mainForm")
+            .Text("提交")
+            .OnClick(Url.Action("doNewInvoice"), "mainForm")
+            .BoxFlex(1),
+            F.Button()
+            .Type(ButtonType.Reset)
+            .CssStyle("background-color:green;color:white;")
+            .Text("重置")
+            .BoxFlex(1)
+
+        )
+    )
+    )
+    
+}
+
+

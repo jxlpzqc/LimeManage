@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="879be1c8334a419090a4fc4b3771a6b7" Name="Diagram1">
+        <EntityTypeShape EntityType="ProjectManagementModel.City" Width="1.5" PointX="3" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectManagementModel.County" Width="1.5" PointX="5.25" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectManagementModel.Invoice" Width="1.5" PointX="9.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectManagementModel.PartyB" Width="1.5" PointX="5.25" PointY="5.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectManagementModel.Project" Width="1.5" PointX="7.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectManagementModel.Province" Width="1.5" PointX="0.75" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectManagementModel.User" Width="1.5" PointX="10" PointY="5.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectManagementModel.UserClass" Width="1.5" PointX="7.75" PointY="5.875" IsExpanded="true" />
+        <AssociationConnector Association="ProjectManagementModel.FK_City_Province" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectManagementModel.FK_County_City" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectManagementModel.FK_Project_County" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectManagementModel.FK_Invoice_Project1" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectManagementModel.FK_Project_PartyB" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectManagementModel.FK_User_UserClass" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
