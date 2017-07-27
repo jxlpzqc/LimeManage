@@ -21,7 +21,7 @@
         .CssClass("marginr")
         .Required(true)
         .ShowRedStar(true)
-        .OnBlur(Url.Action("BlurValidateInvoiceID"), new Parameter("ID", "F.ui.tbID.getValue()"))
+        .OnBlur(Url.Action("BlurValidateCostID"), new Parameter("ID", "F.ui.tbID.getValue()"))
         ,
         F.DropDownList()
         .ID("ddlProject")

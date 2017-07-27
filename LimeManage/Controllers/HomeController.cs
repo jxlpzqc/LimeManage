@@ -15,11 +15,7 @@ namespace LimeManage.Controllers
             return View();
         }
 
-        public ActionResult Hello()
-        {
-            if (Session["username"] == null || Session["username"].Equals("")) { return RedirectToAction("Index", "Session"); }
-            return View();
-        }
+       
 
         public ActionResult LackOfJS()
         {

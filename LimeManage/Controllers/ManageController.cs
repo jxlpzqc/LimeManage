@@ -12,6 +12,7 @@ namespace LimeManage.Controllers
 {
     public class ManageController : BaseController
     {
+        #region 业务操作
 
         #region 新建项目模块
 
@@ -266,6 +267,12 @@ namespace LimeManage.Controllers
             }
             return money;
         }
+
+        private DateTime parseDate(string date)
+        {
+            return DateTime.ParseExact(date, "yyyy-MM-dd", System.Globalization.CultureInfo.CurrentCulture);
+        }
+
         #endregion
 
         #region 收发票模块
@@ -387,5 +394,127 @@ namespace LimeManage.Controllers
 
         #endregion
 
+        #region 开支出模块
+        public ActionResult NewCost()
+        {
+            if (Session["username"] == null || Session["username"].Equals("")) { return RedirectToAction("Index", "Session"); }
+            NewInvoiceViewModel vm = new NewInvoiceViewModel();
+            using (var db = new ProjectManagementEntities())
+            {
+
+
+                //Get Project 
+                DataTable dtPro = new DataTable();
+                dtPro.Columns.Add(new DataColumn("ID", typeof(string)));
+                dtPro.Columns.Add(new DataColumn("Name", typeof(string)));
+                var proArr = db.Project;
+                foreach (var pro in proArr)
+                {
+                    var dtProRow = dtPro.NewRow();
+                    dtProRow["ID"] = pro.ID;
+                    dtProRow["Name"] = String.Format("(代码:{0}) {1}", pro.ID, pro.Name);
+                    dtPro.Rows.Add(dtProRow);
+                }
+                vm.Project = dtPro;
+
+                //GetPartyB
+                DataTable dtPartyB = new DataTable();
+                dtPartyB.Columns.Add(new DataColumn("ID", typeof(string)));
+                dtPartyB.Columns.Add(new DataColumn("Name", typeof(string)));
+                var partyBArr = db.PartyB;
+                foreach (var partyB in partyBArr)
+                {
+                    var dtPartyBRow = dtPartyB.NewRow();
+                    dtPartyBRow["ID"] = partyB.ID;
+                    dtPartyBRow["Name"] = "(代码:" + partyB.ID + ")  " + partyB.Name;
+                    dtPartyB.Rows.Add(dtPartyBRow);
+                }
+                vm.PartyB = dtPartyB;
+
+            }
+            return View(vm);
+        }
+
+        public ActionResult doNewCost(string tbID, string ddlProject, string ddlPartyB,
+            string dpDate, string nbMoney, string ddlMoneyUnit)
+        {
+            if (Session["username"] == null || Session["username"].Equals("")) { return RedirectToAction("Index", "Session"); }
+            if (!ValidateCostID(tbID))
+            {
+                ShowNotify(string.Format("存在{0}这样的支出编号", tbID), MessageBoxIcon.Warning);
+                UIHelper.TextBox("tbID").MarkInvalid("已存在相同的支出编号");
+                return UIHelper.Result();
+            }
+            Cost cos = new Cost();
+            cos.ID = Convert.ToInt32(tbID);
+            cos.ProjectID = Convert.ToInt32(ddlProject);
+            cos.PartyBID = Convert.ToInt32(ddlPartyB);
+            cos.Money = computeMoney(nbMoney, ddlMoneyUnit);
+            cos.Date = parseDate(dpDate);
+
+            using (var db = new ProjectManagementEntities())
+            {
+                db.Cost.Add(cos);
+                try
+                {
+                    db.SaveChanges();
+                    ShowNotify("发票添加成功", MessageBoxIcon.Success);
+                    UIHelper.Form("mainForm").Reset();
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException)
+                {
+
+                    ShowNotify("数据无效，请检查表单！", MessageBoxIcon.Error);
+                }
+                catch (Exception)
+                {
+                    ShowNotify("服务器发生了未能处理的异常，请联系技术人员进行检测。", MessageBoxIcon.Error);
+                }
+                
+            }
+            return UIHelper.Result();
+        }
+
+        [HttpPost]
+        public ActionResult BlurValidateCostID(string ID)
+        {
+            if (!ValidateCostID(ID))
+            {
+                UIHelper.TextBox("tbID").MarkInvalid("已存在相同的支出编号");
+
+            }
+            return UIHelper.Result();
+
+        }
+
+        private bool ValidateCostID(string ID)
+        {
+            using (var db = new ProjectManagementEntities())
+            {
+                var projectIDNum = Convert.ToInt32(ID);
+                if (db.Cost.Where(u => u.ID == (projectIDNum)).Count() > 0)
+                {
+                    //txtProjectID.MarkInvalid(String.Format("已存在{0}这样的项目编号", projectID));
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        #endregion
+
+        #endregion
+
+        #region 查询功能
+
+        #region 查项目
+        public ActionResult SearchProject()
+        {
+            return View();
+        }
+
+        #endregion
+
+        #endregion
     }
 }

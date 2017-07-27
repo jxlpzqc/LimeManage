@@ -133,6 +133,30 @@
                     closable: true
             });
             }
+
+            function newCost(event) {
+               
+                
+                F.ui.mainTabStrip.addTab({
+                    id: "mainTabStrip_fNewCost",
+                    title: "开支出",
+                    iframe: true,
+                    iframeUrl: "@Url.Action("NewCost","Manage")",
+                    closable: true
+            });
+            }
+
+            function searchProject(event) {
+               
+                
+                F.ui.mainTabStrip.addTab({
+                    id: "mainTabStrip_fSearchProject",
+                    title: "查项目",
+                    iframe: true,
+                    iframeUrl: "@Url.Action("SearchProject","Manage")",
+                    closable: true
+            });
+            }
         </script>
         <table class="navitable">
             <tbody>
@@ -150,7 +174,6 @@
                     <td>
                         @(F.Button()
                         .ID("NewInvoice")
-                        .OnClientClick("top.addExampleTabByHref('" + Url.Content("~/") + "');")
                         .IconAlign(FineUIMvc.IconAlign.Top)
                         .Icon(FineUIMvc.Icon.ApplicationFormEdit)
                         .Listener("click", "newInvoice")
@@ -161,7 +184,7 @@
                     <td rowspan="2">
                         @(F.Button()
                         .ID("SerchProject")
-                        .OnClientClick("top.addExampleTabByHref('" + Url.Content("~/") + "');")
+                        .Listener("click","searchProject")
                         .IconAlign(FineUIMvc.IconAlign.Top)
                         .Icon(FineUIMvc.Icon.SystemSearch)
                         .Text("查项目")
@@ -192,7 +215,7 @@
                     <td>
                         @(F.Button()
                         .ID("Cost")
-                        .OnClientClick("top.addExampleTabByHref('" + Url.Content("~/") + "');")
+                        .Listener("click","newCost")
                         .IconAlign(FineUIMvc.IconAlign.Top)
                         .Icon(FineUIMvc.Icon.ApplicationFormEdit)
                         .Text("开支出")
@@ -245,12 +268,10 @@
                         .ID("treeMenu")
                         .Nodes(
                             F.TreeNode()
-                                .Text("操作")
+                                .Text("业务操作")
                                 .Expanded(true)
                                 .Nodes(
-                                    F.TreeNode()
-                                        .Text("开始页面")
-                                        .NavigateUrl("~/Home/Hello"),
+                                    
                                     F.TreeNode()
                                         .Text("新建项目")
                                         .NavigateUrl("~/Manage/NewProject")
@@ -258,8 +279,21 @@
                                     F.TreeNode()
                                         .Text("收发票")
                                         .NavigateUrl("~/Manage/NewInvoice")
-                                        .NodeID("fNewInvoice")
-                                )
+                                        .NodeID("fNewInvoice"),
+                                   F.TreeNode()
+                                        .Text("开支出")
+                                        .NavigateUrl("~/Manage/NewCost")
+                                        .NodeID("fNewCost")
+                                ),
+                          F.TreeNode()
+                              .Text("查询功能")
+                              .Expanded(false)
+                              .Nodes(
+                                   F.TreeNode()
+                                        .Text("查项目")
+                                        .NavigateUrl("~/Manage/SearchProject")
+                                        .NodeID("fSearchProject")
+                              )
                         )
                 ),
             F.Region()

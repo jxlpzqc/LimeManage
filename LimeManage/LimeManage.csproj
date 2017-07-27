@@ -177,6 +177,7 @@
   <ItemGroup>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Models\LimeManageDB.edmx.sql" />
     <Content Include="res\css\common.css" />
     <Content Include="res\css\index.css" />
     <Content Include="res\images\blank.png" />
@@ -255,6 +256,8 @@
     <Content Include="Views\Manage\NewProject.cshtml" />
     <Content Include="Views\Home\LackOfJS.cshtml" />
     <Content Include="Views\Manage\NewInvoice.cshtml" />
+    <Content Include="Views\Manage\NewCost.cshtml" />
+    <Content Include="Views\Manage\SearchProject.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -266,9 +269,6 @@
   <ItemGroup>
     <Content Include="res\images\logo\logo.psd" />
     <Content Include="res\images\logo\logo_127.psd" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Home\Hello.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\Themes.cshtml" />
