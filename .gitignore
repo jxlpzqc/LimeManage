@@ -18,6 +18,7 @@
 x64/  
 build/  
 [Bb]in/  
+!FineUIMvc.dll
 [Oo]bj/  
   
 # MSTest test Results  
