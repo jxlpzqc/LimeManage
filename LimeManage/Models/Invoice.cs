@@ -14,14 +14,16 @@ namespace LimeManage.Models
     
     public partial class Invoice
     {
-        public int ID { get; set; }
+        public string ID { get; set; }
         public int ProjectID { get; set; }
         public System.DateTime Date { get; set; }
+        public int PartyBID { get; set; }
         public int Money { get; set; }
         public string Type { get; set; }
         public int TaxPayed { get; set; }
         public string PayMethod { get; set; }
     
+        public virtual PartyB PartyB { get; set; }
         public virtual Project Project { get; set; }
     }
 }

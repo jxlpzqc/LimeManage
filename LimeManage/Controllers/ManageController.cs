@@ -14,8 +14,13 @@ namespace LimeManage.Controllers
     {
 
         #region 新建项目模块
+
         public ActionResult NewProject()
         {
+            if (Session["username"] == null || Session["username"].Equals("")) { 
+                return RedirectToAction("Index", "Session"); 
+            }
+            
             NewProjectViewModel vm = new NewProjectViewModel();
             
             using (var db = new ProjectManagementEntities())
@@ -65,6 +70,8 @@ namespace LimeManage.Controllers
             string tbContact, string nbMoney,string ddlMoneyUnit,
             string dpDate)
         {
+            if (Session["username"] == null || Session["username"].Equals("")) { return RedirectToAction("Index", "Session"); }
+            
             Project p = new Project();
             if (String.IsNullOrEmpty(projectID) || String.IsNullOrEmpty(ddlCounty)||
                 String.IsNullOrEmpty(tbPartyA) || String.IsNullOrEmpty(ddlPartyB)
@@ -73,7 +80,7 @@ namespace LimeManage.Controllers
                 return RedirectToAction("LackOfJS", "Home");
             }
 
-            if(!ValidateID(projectID))
+            if(!ValidateProjectID(projectID))
             {
                 ShowNotify("已经具有相同的项目编号",MessageBoxIcon.Warning);
                 var txtProjectID = UIHelper.TextBox("projectID");
@@ -89,19 +96,8 @@ namespace LimeManage.Controllers
             p.PartyBID = Convert.ToInt32(ddlPartyB);
             p.ResponsiblePerson = tbResponsiblePerson;
             p.ContactPhone = tbContact;
-            int money = Convert.ToInt32(nbMoney);
-            switch(ddlMoneyUnit)
-            {
-                
-                case "wan":
-                    money = money * 10000;
-                    break;
-                case "yi":
-                    money = money * 100000000;
-                    break;
-
-            }
-            p.Money = money;
+            
+            p.Money = computeMoney(nbMoney,ddlMoneyUnit);
             p.Date = DateTime.ParseExact(dpDate,"yyyy-MM-dd",System.Globalization.CultureInfo.CurrentCulture);
 
             using (var db = new ProjectManagementEntities())
@@ -121,7 +117,7 @@ namespace LimeManage.Controllers
                     UIHelper.Form("mainForm").Reset();
                     UIHelper.TextBox("projectID").Text(getDefaultProjectID().ToString());
                 }
-                catch (System.Data.Entity.Validation.DbEntityValidationException ex)
+                catch (System.Data.Entity.Validation.DbEntityValidationException)
                 {
                     
                     ShowNotify("数据无效，请检查表单！",MessageBoxIcon.Error);
@@ -210,15 +206,16 @@ namespace LimeManage.Controllers
         [HttpPost]
         public ActionResult BlurValidateID(string projectID)
         {
+
             var txtProjectID = UIHelper.TextBox("projectID");
-            if (!ValidateID(projectID)) 
+            if (!ValidateProjectID(projectID)) 
             {
                 txtProjectID.MarkInvalid(String.Format("已存在{0}这样的项目编号", projectID)); 
             }
             return UIHelper.Result();
         }
 
-        private bool ValidateID(string projectID)
+        private bool ValidateProjectID(string projectID)
         {
             //var txtProjectID = UIHelper.TextBox("projectID");
             using (var db = new ProjectManagementEntities())
@@ -252,12 +249,143 @@ namespace LimeManage.Controllers
 
         #endregion
 
-        #region 开发票模块
-        public ActionResult NewInvoice()
+        #region 公共
+        private int computeMoney(string value,string unit)
         {
-            return View();
+            int money = Convert.ToInt32(value);
+            switch (unit)
+            {
 
+                case "wan":
+                    money = money * 10000;
+                    break;
+                case "yi":
+                    money = money * 100000000;
+                    break;
+
+            }
+            return money;
         }
         #endregion
+
+        #region 收发票模块
+        public ActionResult NewInvoice()
+        {
+            if (Session["username"] == null || Session["username"].Equals("")) { return RedirectToAction("Index", "Session"); }
+            NewInvoiceViewModel vm = new NewInvoiceViewModel();
+            using (var db = new ProjectManagementEntities())
+            {
+
+                
+                //Get Project 
+                DataTable dtPro = new DataTable();
+                dtPro.Columns.Add(new DataColumn("ID", typeof(string)));
+                dtPro.Columns.Add(new DataColumn("Name", typeof(string)));
+                var proArr = db.Project;
+                foreach (var pro in proArr)
+                {
+                    var dtProRow = dtPro.NewRow();
+                    dtProRow["ID"] = pro.ID;
+                    dtProRow["Name"] = String.Format("(代码:{0}) {1}",pro.ID , pro.Name);
+                    dtPro.Rows.Add(dtProRow);
+                }
+                vm.Project = dtPro;
+
+                //GetPartyB
+                DataTable dtPartyB = new DataTable();
+                dtPartyB.Columns.Add(new DataColumn("ID", typeof(string)));
+                dtPartyB.Columns.Add(new DataColumn("Name", typeof(string)));
+                var partyBArr = db.PartyB;
+                foreach (var partyB in partyBArr)
+                {
+                    var dtPartyBRow = dtPartyB.NewRow();
+                    dtPartyBRow["ID"] = partyB.ID;
+                    dtPartyBRow["Name"] = "(代码:" + partyB.ID + ")  " + partyB.Name;
+                    dtPartyB.Rows.Add(dtPartyBRow);
+                }
+                vm.PartyB = dtPartyB;
+
+            }
+
+            return View(vm);
+
+        }
+
+        public ActionResult DoNewInvoice(string tbID, string ddlProject, string ddlPartyB,
+            string dpDate, string nbMoney, string ddlMoneyUnit, string ddlType,
+            string nbTaxPayed, string ddlTaxUnit, string ddlPayMethod
+            )
+        {
+            if (Session["username"] == null || Session["username"].Equals("")) { return RedirectToAction("Index", "Session"); }
+            if (!ValidateInvoiceID(tbID))
+            {
+                ShowNotify(string.Format("存在{0}这样的发票编号",tbID),MessageBoxIcon.Warning);
+                UIHelper.TextBox("tbID").MarkInvalid("已存在相同的发票编号");
+                return UIHelper.Result();
+            }
+            
+            Invoice inv = new Invoice();
+            inv.ID = tbID;
+            inv.ProjectID = Convert.ToInt32(ddlProject);
+            inv.PartyBID = Convert.ToInt32(ddlPartyB);
+            inv.Date = DateTime.ParseExact(dpDate, "yyyy-MM-dd", System.Globalization.CultureInfo.CurrentCulture);
+            inv.Money = computeMoney(nbMoney, ddlMoneyUnit);
+            inv.Type = ddlType;
+            inv.TaxPayed = computeMoney(nbTaxPayed, ddlTaxUnit);
+            inv.PayMethod = ddlPayMethod;
+
+            using(var db = new ProjectManagementEntities())
+            {
+                db.Invoice.Add(inv);
+
+                try
+                {
+                    db.SaveChanges();
+                    ShowNotify("发票添加成功", MessageBoxIcon.Success);
+                    UIHelper.Form("mainForm").Reset();
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException)
+                {
+
+                    ShowNotify("数据无效，请检查表单！", MessageBoxIcon.Error);
+                }
+                catch (Exception)
+                {
+                    ShowNotify("服务器发生了未能处理的异常，请联系技术人员进行检测。", MessageBoxIcon.Error);
+                }
+            }
+
+            return UIHelper.Result();
+        }
+        
+        [HttpPost]
+        public ActionResult BlurValidateInvoiceID(string ID)
+        {
+            if(!ValidateInvoiceID(ID))
+            {
+                UIHelper.TextBox("tbID").MarkInvalid("已存在相同的发票编号");
+
+            }
+            return UIHelper.Result();
+            
+        }
+
+        private bool ValidateInvoiceID(string ID)
+        {
+            using (var db = new ProjectManagementEntities())
+            {
+                var projectIDNum = ID;
+                if (db.Invoice.Where(u => u.ID.Equals(projectIDNum) ).Count() > 0)
+                {
+                    //txtProjectID.MarkInvalid(String.Format("已存在{0}这样的项目编号", projectID));
+                    return false;
+                }
+            }
+            return true;
+        }
+
+
+        #endregion
+
     }
 }

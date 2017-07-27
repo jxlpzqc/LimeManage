@@ -17,11 +17,15 @@ namespace LimeManage.Models
         public PartyB()
         {
             this.Project = new HashSet<Project>();
+            this.Invoice = new HashSet<Invoice>();
+            this.Cost = new HashSet<Cost>();
         }
     
         public int ID { get; set; }
         public string Name { get; set; }
     
         public virtual ICollection<Project> Project { get; set; }
+        public virtual ICollection<Invoice> Invoice { get; set; }
+        public virtual ICollection<Cost> Cost { get; set; }
     }
 }

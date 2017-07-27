@@ -126,6 +126,9 @@
     <Compile Include="Models\City.cs">
       <DependentUpon>LimeManageDB.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Cost.cs">
+      <DependentUpon>LimeManageDB.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\County.cs">
       <DependentUpon>LimeManageDB.tt</DependentUpon>
     </Compile>
@@ -147,6 +150,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>LimeManageDB.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\LimeManageDB1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LimeManageDB.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Models\PartyB.cs">
       <DependentUpon>LimeManageDB.tt</DependentUpon>
     </Compile>
@@ -163,6 +171,7 @@
       <DependentUpon>LimeManageDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\NewInvoiceViewModel.cs" />
     <Compile Include="ViewModels\NewProjectViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -267,7 +276,7 @@
   <ItemGroup>
     <EntityDeploy Include="Models\LimeManageDB.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>LimeManageDB.Designer.cs</LastGenOutput>
+      <LastGenOutput>LimeManageDB1.Designer.cs</LastGenOutput>
     </EntityDeploy>
   </ItemGroup>
   <ItemGroup>

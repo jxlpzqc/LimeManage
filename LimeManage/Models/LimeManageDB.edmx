@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="ProjectManagementModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2005" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="ProjectManagementModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2005" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="City">
           <Key>
             <PropertyRef Name="ID" />
@@ -12,6 +12,16 @@
           <Property Name="ID" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="20" Nullable="false" />
           <Property Name="ProvinceID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Cost">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="ProjectID" Type="int" Nullable="false" />
+          <Property Name="PartyBID" Type="int" Nullable="false" />
+          <Property Name="Money" Type="int" Nullable="false" />
+          <Property Name="Date" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="County">
           <Key>
@@ -25,9 +35,10 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="ID" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="ProjectID" Type="int" Nullable="false" />
           <Property Name="Date" Type="datetime" Nullable="false" />
+          <Property Name="PartyBID" Type="int" Nullable="false" />
           <Property Name="Money" Type="int" Nullable="false" />
           <Property Name="Type" Type="nvarchar" MaxLength="10" />
           <Property Name="TaxPayed" Type="int" Nullable="false" />
@@ -89,6 +100,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Cost_PartyB">
+          <End Role="PartyB" Type="Self.PartyB" Multiplicity="1" />
+          <End Role="Cost" Type="Self.Cost" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartyB">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Cost">
+              <PropertyRef Name="PartyBID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cost_Project">
+          <End Role="Project" Type="Self.Project" Multiplicity="1" />
+          <End Role="Cost" Type="Self.Cost" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Cost">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_County_City">
           <End Role="City" Type="Self.City" Multiplicity="1" />
           <End Role="County" Type="Self.County" Multiplicity="*" />
@@ -98,6 +133,18 @@
             </Principal>
             <Dependent Role="County">
               <PropertyRef Name="CityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Invoice_PartyB">
+          <End Role="PartyB" Type="Self.PartyB" Multiplicity="1" />
+          <End Role="Invoice" Type="Self.Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartyB">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Invoice">
+              <PropertyRef Name="PartyBID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -151,6 +198,7 @@
         </Association>
         <EntityContainer Name="ProjectManagementModelStoreContainer">
           <EntitySet Name="City" EntityType="Self.City" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Cost" EntityType="Self.Cost" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="County" EntityType="Self.County" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Invoice" EntityType="Self.Invoice" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PartyB" EntityType="Self.PartyB" Schema="dbo" store:Type="Tables" />
@@ -162,9 +210,21 @@
             <End Role="Province" EntitySet="Province" />
             <End Role="City" EntitySet="City" />
           </AssociationSet>
+          <AssociationSet Name="FK_Cost_PartyB" Association="Self.FK_Cost_PartyB">
+            <End Role="PartyB" EntitySet="PartyB" />
+            <End Role="Cost" EntitySet="Cost" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cost_Project" Association="Self.FK_Cost_Project">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="Cost" EntitySet="Cost" />
+          </AssociationSet>
           <AssociationSet Name="FK_County_City" Association="Self.FK_County_City">
             <End Role="City" EntitySet="City" />
             <End Role="County" EntitySet="County" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Invoice_PartyB" Association="Self.FK_Invoice_PartyB">
+            <End Role="PartyB" EntitySet="PartyB" />
+            <End Role="Invoice" EntitySet="Invoice" />
           </AssociationSet>
           <AssociationSet Name="FK_Invoice_Project1" Association="Self.FK_Invoice_Project1">
             <End Role="Project" EntitySet="Project" />
@@ -183,8 +243,7 @@
             <End Role="User" EntitySet="User" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ProjectManagementModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -208,19 +267,6 @@
           <NavigationProperty Name="City" Relationship="Self.FK_County_City" FromRole="County" ToRole="City" />
           <NavigationProperty Name="Project" Relationship="Self.FK_Project_County" FromRole="County" ToRole="Project" />
         </EntityType>
-        <EntityType Name="Invoice">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" />
-          <Property Name="ProjectID" Type="Int32" Nullable="false" />
-          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Money" Type="Int32" Nullable="false" />
-          <Property Name="Type" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
-          <Property Name="TaxPayed" Type="Int32" Nullable="false" />
-          <Property Name="PayMethod" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Project" Relationship="Self.FK_Invoice_Project1" FromRole="Invoice" ToRole="Project" />
-        </EntityType>
         <EntityType Name="PartyB">
           <Key>
             <PropertyRef Name="ID" />
@@ -228,6 +274,8 @@
           <Property Name="ID" Type="Int32" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Project" Relationship="Self.FK_Project_PartyB" FromRole="PartyB" ToRole="Project" />
+          <NavigationProperty Name="Invoice" Relationship="ProjectManagementModel.FK_Invoice_PartyB" FromRole="PartyB" ToRole="Invoice" />
+          <NavigationProperty Name="Cost" Relationship="ProjectManagementModel.FK_Cost_PartyB" FromRole="PartyB" ToRole="Cost" />
         </EntityType>
         <EntityType Name="Project">
           <Key>
@@ -243,8 +291,9 @@
           <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Money" Type="Int32" Nullable="false" />
           <NavigationProperty Name="County" Relationship="Self.FK_Project_County" FromRole="Project" ToRole="County" />
-          <NavigationProperty Name="Invoice" Relationship="Self.FK_Invoice_Project1" FromRole="Project" ToRole="Invoice" />
           <NavigationProperty Name="PartyB" Relationship="Self.FK_Project_PartyB" FromRole="Project" ToRole="PartyB" />
+          <NavigationProperty Name="Invoice" Relationship="ProjectManagementModel.FK_Invoice_Project1" FromRole="Project" ToRole="Invoice" />
+          <NavigationProperty Name="Cost" Relationship="ProjectManagementModel.FK_Cost_Project" FromRole="Project" ToRole="Cost" />
         </EntityType>
         <EntityType Name="Province">
           <Key>
@@ -308,18 +357,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Invoice_Project1">
-          <End Role="Project" Type="Self.Project" Multiplicity="1" />
-          <End Role="Invoice" Type="Self.Invoice" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Project">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Invoice">
-              <PropertyRef Name="ProjectID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Project_PartyB">
           <End Role="PartyB" Type="Self.PartyB" Multiplicity="1" />
           <End Role="Project" Type="Self.Project" Multiplicity="*" />
@@ -347,7 +384,6 @@
         <EntityContainer Name="ProjectManagementEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="City" EntityType="Self.City" />
           <EntitySet Name="County" EntityType="Self.County" />
-          <EntitySet Name="Invoice" EntityType="Self.Invoice" />
           <EntitySet Name="PartyB" EntityType="Self.PartyB" />
           <EntitySet Name="Project" EntityType="Self.Project" />
           <EntitySet Name="Province" EntityType="Self.Province" />
@@ -365,10 +401,6 @@
             <End Role="County" EntitySet="County" />
             <End Role="Project" EntitySet="Project" />
           </AssociationSet>
-          <AssociationSet Name="FK_Invoice_Project1" Association="Self.FK_Invoice_Project1">
-            <End Role="Project" EntitySet="Project" />
-            <End Role="Invoice" EntitySet="Invoice" />
-          </AssociationSet>
           <AssociationSet Name="FK_Project_PartyB" Association="Self.FK_Project_PartyB">
             <End Role="PartyB" EntitySet="PartyB" />
             <End Role="Project" EntitySet="Project" />
@@ -377,7 +409,100 @@
             <End Role="UserClass" EntitySet="UserClass" />
             <End Role="User" EntitySet="User" />
           </AssociationSet>
+          <EntitySet Name="Invoice" EntityType="ProjectManagementModel.Invoice" />
+          <AssociationSet Name="FK_Invoice_PartyB" Association="ProjectManagementModel.FK_Invoice_PartyB">
+            <End Role="PartyB" EntitySet="PartyB" />
+            <End Role="Invoice" EntitySet="Invoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Invoice_Project1" Association="ProjectManagementModel.FK_Invoice_Project1">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="Invoice" EntitySet="Invoice" />
+          </AssociationSet>
+          <EntitySet Name="Cost" EntityType="ProjectManagementModel.Cost" />
+          <AssociationSet Name="FK_Cost_PartyB" Association="ProjectManagementModel.FK_Cost_PartyB">
+            <End Role="PartyB" EntitySet="PartyB" />
+            <End Role="Cost" EntitySet="Cost" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cost_Project" Association="ProjectManagementModel.FK_Cost_Project">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="Cost" EntitySet="Cost" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Invoice">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="ProjectID" Type="Int32" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PartyBID" Type="Int32" Nullable="false" />
+          <Property Name="Money" Type="Int32" Nullable="false" />
+          <Property Name="Type" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="TaxPayed" Type="Int32" Nullable="false" />
+          <Property Name="PayMethod" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="PartyB" Relationship="ProjectManagementModel.FK_Invoice_PartyB" FromRole="Invoice" ToRole="PartyB" />
+          <NavigationProperty Name="Project" Relationship="ProjectManagementModel.FK_Invoice_Project1" FromRole="Invoice" ToRole="Project" />
+        </EntityType>
+        <Association Name="FK_Invoice_PartyB">
+          <End Type="ProjectManagementModel.PartyB" Role="PartyB" Multiplicity="1" />
+          <End Type="ProjectManagementModel.Invoice" Role="Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartyB">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Invoice">
+              <PropertyRef Name="PartyBID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Invoice_Project1">
+          <End Type="ProjectManagementModel.Project" Role="Project" Multiplicity="1" />
+          <End Type="ProjectManagementModel.Invoice" Role="Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Invoice">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Cost">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="ProjectID" Type="Int32" Nullable="false" />
+          <Property Name="PartyBID" Type="Int32" Nullable="false" />
+          <Property Name="Money" Type="Int32" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="PartyB" Relationship="ProjectManagementModel.FK_Cost_PartyB" FromRole="Cost" ToRole="PartyB" />
+          <NavigationProperty Name="Project" Relationship="ProjectManagementModel.FK_Cost_Project" FromRole="Cost" ToRole="Project" />
+        </EntityType>
+        <Association Name="FK_Cost_PartyB">
+          <End Type="ProjectManagementModel.PartyB" Role="PartyB" Multiplicity="1" />
+          <End Type="ProjectManagementModel.Cost" Role="Cost" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartyB">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Cost">
+              <PropertyRef Name="PartyBID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cost_Project">
+          <End Type="ProjectManagementModel.Project" Role="Project" Multiplicity="1" />
+          <End Type="ProjectManagementModel.Cost" Role="Cost" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Cost">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -399,19 +524,6 @@
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="CityID" ColumnName="CityID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Invoice">
-            <EntityTypeMapping TypeName="ProjectManagementModel.Invoice">
-              <MappingFragment StoreEntitySet="Invoice">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="Money" ColumnName="Money" />
-                <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="TaxPayed" ColumnName="TaxPayed" />
-                <ScalarProperty Name="PayMethod" ColumnName="PayMethod" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -461,6 +573,31 @@
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Permission" ColumnName="Permission" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Invoice">
+            <EntityTypeMapping TypeName="ProjectManagementModel.Invoice">
+              <MappingFragment StoreEntitySet="Invoice">
+                <ScalarProperty Name="PayMethod" ColumnName="PayMethod" />
+                <ScalarProperty Name="TaxPayed" ColumnName="TaxPayed" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Money" ColumnName="Money" />
+                <ScalarProperty Name="PartyBID" ColumnName="PartyBID" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Cost">
+            <EntityTypeMapping TypeName="ProjectManagementModel.Cost">
+              <MappingFragment StoreEntitySet="Cost">
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Money" ColumnName="Money" />
+                <ScalarProperty Name="PartyBID" ColumnName="PartyBID" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

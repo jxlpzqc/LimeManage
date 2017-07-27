@@ -127,7 +127,7 @@
                 
                 F.ui.mainTabStrip.addTab({
                     id: "mainTabStrip_fNewInvoice",
-                    title: "开发票",
+                    title: "收发票",
                     iframe: true,
                     iframeUrl: "@Url.Action("NewInvoice","Manage")",
                     closable: true
@@ -154,7 +154,7 @@
                         .IconAlign(FineUIMvc.IconAlign.Top)
                         .Icon(FineUIMvc.Icon.ApplicationFormEdit)
                         .Listener("click", "newInvoice")
-                        .Text("开发票")
+                        .Text("收发票")
                         )
                     </td>
                     <td rowspan="2"><i class="ui-icon f-icon-long-arrow-right myicon"></i></td>
@@ -256,7 +256,7 @@
                                         .NavigateUrl("~/Manage/NewProject")
                                         .NodeID("fNewProject"),
                                     F.TreeNode()
-                                        .Text("开发票")
+                                        .Text("收发票")
                                         .NavigateUrl("~/Manage/NewInvoice")
                                         .NodeID("fNewInvoice")
                                 )

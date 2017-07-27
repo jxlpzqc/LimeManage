@@ -1,6 +1,7 @@
-﻿
+﻿@model LimeManage.ViewModels.NewInvoiceViewModel
+
 @{
-    ViewBag.Title = "开发票";
+    ViewBag.Title = "收发票";
     var F = Html.F();
 }
 
@@ -11,7 +12,7 @@
     .MessageTarget(MessageTarget.Side)
     .BodyPadding(5)
     .Width(500)
-    .Title("开发票")
+    .Title("收发票")
     .AutoScroll(true)
     .Items(
         F.TextBox()
@@ -19,12 +20,27 @@
         .Label("发票编号")
         .CssClass("marginr")
         .Required(true)
-        .ShowRedStar(true),
+        .ShowRedStar(true)
+        .OnBlur(Url.Action("BlurValidateInvoiceID"), new Parameter("ID", "F.ui.tbID.getValue()"))
+        ,
         F.DropDownList()
         .ID("ddlProject")
         .Label("项目")
         .ShowRedStar(true)
-        .Required(true),
+        .Required(true)
+        .EnableEdit(true)
+        .DataValueField("ID")
+        .DataTextField("Name")
+        .DataSource(Model.Project),
+        F.DropDownList()
+        .ID("ddlPartyB")
+        .Label("开票公司")
+        .ShowRedStar(true)
+        .EnableEdit(true)
+        .Required(true)
+        .DataValueField("ID")
+        .DataTextField("Name")
+        .DataSource(Model.PartyB),
         F.DatePicker()
         .ID("dpDate")
         .Label("开票日期")
@@ -66,8 +82,8 @@
         .ShowRedStar(true)
         .Required(true)
         .Items(
-            new ListItem("普票","common",true),
-            new ListItem("专票","special")
+            new ListItem("普票","普票",true),
+            new ListItem("专票","专票")
         ),
         F.Panel()
         .Layout(LayoutType.HBox)
@@ -105,9 +121,9 @@
         .ShowRedStar(true)
         .Required(true)
         .Items(
-            new ListItem("现金","cash",true),
-            new ListItem("刷卡","card"),
-            new ListItem("挂账","account")
+            new ListItem("现金","现金",true),
+            new ListItem("刷卡","刷卡"),
+            new ListItem("挂账","挂账")
         ),
         F.Panel()
         .ShowBorder(false)

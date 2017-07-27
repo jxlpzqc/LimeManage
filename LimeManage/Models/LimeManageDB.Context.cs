@@ -27,11 +27,12 @@ namespace LimeManage.Models
     
         public virtual DbSet<City> City { get; set; }
         public virtual DbSet<County> County { get; set; }
-        public virtual DbSet<Invoice> Invoice { get; set; }
         public virtual DbSet<PartyB> PartyB { get; set; }
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<Province> Province { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserClass> UserClass { get; set; }
+        public virtual DbSet<Invoice> Invoice { get; set; }
+        public virtual DbSet<Cost> Cost { get; set; }
     }
 }

@@ -12,27 +12,15 @@ namespace LimeManage.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Project
+    public partial class Cost
     {
-        public Project()
-        {
-            this.Invoice = new HashSet<Invoice>();
-            this.Cost = new HashSet<Cost>();
-        }
-    
         public int ID { get; set; }
-        public string Name { get; set; }
-        public int CountyID { get; set; }
-        public string PartyAName { get; set; }
+        public int ProjectID { get; set; }
         public int PartyBID { get; set; }
-        public string ResponsiblePerson { get; set; }
-        public string ContactPhone { get; set; }
-        public System.DateTime Date { get; set; }
         public int Money { get; set; }
+        public System.DateTime Date { get; set; }
     
-        public virtual County County { get; set; }
         public virtual PartyB PartyB { get; set; }
-        public virtual ICollection<Invoice> Invoice { get; set; }
-        public virtual ICollection<Cost> Cost { get; set; }
+        public virtual Project Project { get; set; }
     }
 }
