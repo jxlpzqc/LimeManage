@@ -1,0 +1,21 @@
+﻿@model LimeManage.ViewModels.ProjectDetailViewModel
+@{
+    ViewBag.Title = "项目详情";
+    
+}
+
+@section body{
+
+<p>项目编号: @Model.ID </p>
+<p>项目名称: @Model.Name </p>
+<p>省    份: @Model.Province</p>
+<p>市    区: @Model.City </p>
+<p>县    区: @Model.County </p>
+<p>甲    方: @Model.PartyA </p>
+<p>乙    方: @Model.PartyB </p>
+<p>负 责 人: @Model.ResponsiblePerson </p>
+<p>联系电话: @Model.ContactPhone </p>
+<p>创建日期: @Model.Date </p>
+<p>资    金：@Model.Money </p>
+}
+

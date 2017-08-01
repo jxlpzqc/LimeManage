@@ -155,6 +155,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>LimeManageDB.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\MyListItem.cs" />
     <Compile Include="Models\PartyB.cs">
       <DependentUpon>LimeManageDB.tt</DependentUpon>
     </Compile>
@@ -171,8 +172,11 @@
       <DependentUpon>LimeManageDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\EditProjectViewModel.cs" />
     <Compile Include="ViewModels\NewInvoiceViewModel.cs" />
     <Compile Include="ViewModels\NewProjectViewModel.cs" />
+    <Compile Include="ViewModels\ProjectDetailViewModel.cs" />
+    <Compile Include="ViewModels\SearchProjectViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
@@ -258,6 +262,8 @@
     <Content Include="Views\Manage\NewInvoice.cshtml" />
     <Content Include="Views\Manage\NewCost.cshtml" />
     <Content Include="Views\Manage\SearchProject.cshtml" />
+    <Content Include="Views\Manage\ProjectDetail.cshtml" />
+    <Content Include="Views\Manage\EditProject.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

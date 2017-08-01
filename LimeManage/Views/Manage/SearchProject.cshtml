@@ -1,10 +1,175 @@
-﻿
+﻿@model LimeManage.ViewModels.SearchProjectViewModel
+
 @{
     ViewBag.Title = "查项目";
     var F = Html.F();
 }
 
 @section body{
-    
+    @(F.Grid()
+    .EnableCollapse(true)
+    .Width(1200)
+    .ID("mainGrid")
+    .DataIDField("ID")
+    .DataTextField("Name")
+    .AllowSorting(true)
+    .OnSort(Url.Action("SearchProjectGridIndexChangedOrSort"), "mainGrid")
+    .EnableColumnLines(true)
+    .Title("查项目")
+    .AllowPaging(true)
+    .PageSize(5)
+    .RecordCount(Model.RecordCount)
+    .OnPageIndexChanged(Url.Action("SearchProjectGridIndexChangedOrSort"), "mainGrid")
+    .IsDatabasePaging(true)
+    .Columns(
+            F.RowNumberField(),
+            F.RenderField()
+                .HeaderText("项目编号")
+                .DataField("ID")
+                .SortField("ID")
+                .FieldType(FieldType.Int)
+                .Width(100),
+            F.RenderField()
+                .HeaderText("项目名称")
+                .DataField("Name")
+                .ExpandUnusedSpace(true),
+            F.RenderField()
+                .HeaderText("项目地区")
+                .DataField("Area")
+                .SortField("Area")
+                .Width(150),
+            F.RenderField()
+                .HeaderText("甲方名称")
+                .DataField("PartyA")
+                .Width(100),
+            F.RenderField()
+                .HeaderText("乙方名称")
+                .DataField("PartyB")
+                .Width(150),
+            F.RenderField()
+                .HeaderText("金额")
+                .DataField("Money")
+                .SortField("Money")
+                .Width(150),
+            F.RenderField()
+                .HeaderText("添加日期")
+                .DataField("Date")
+                .SortField("Date")
+                .FieldType(FieldType.Date)
+                .Renderer(Renderer.Date)
+                .RendererArgument("yyyy-MM-dd")
+                .Width(100),
+            F.RenderField()
+                .HeaderText("操作")
+                .RendererFunction("renderOperateButton")
+                .Width(200)
+        )
+        .PageItems(
+            F.ToolbarFill(),
+            F.ToolbarSeparator(),
+            F.Button()
+            .Text("导出Excel")
+            .Listener("click","onExportToXlsClick"),
+            F.ToolbarSeparator()
+        )
+        .DataSource(Model.Data)
+    )
+
+    @* 弹出窗口 *@
+    @(F.Window()
+            .ID("winDetail")
+            .WindowPosition(WindowPosition.Center)
+            .IsModal(true)
+            .Title("详细信息")
+            .EnableMaximize(true)
+            .EnableResize(true)
+            .Target(Target.Self)
+            .EnableIFrame(true)
+            .Height(450)
+            .Width(500)
+            .Hidden(true)
+    )
+    @(F.Window()
+                .ID("winEdit")
+                .WindowPosition(WindowPosition.Center)
+                .IsModal(true)
+                .Title("修改项目")
+                .EnableMaximize(true)
+                .EnableResize(true)
+                .Target(Target.Self)
+                .EnableIFrame(true)
+                .Height(380)
+                .Width(850)
+                .Hidden(true)
+    )
+
 }
 
+@section script{
+    
+
+<script>
+        function onExportToXlsClick(event)
+        {
+            window.location.href = '@Url.Action("ProjectExportToXls")';
+        }
+
+        function renderOperateButton(value, params) {
+            return '  <a class="action-btn mainGrid-detail" href="javascript:;"><i class="ui-icon f-grid-cell-iconfont f-icon-book">详细</i></a>'
+               +  '  <a class="action-btn mainGrid-remove" href="javascript:;"><i class="ui-icon f-grid-cell-iconfont f-icon-remove">删除</i></a>'
+                + '  <a class="action-btn mainGrid-edit" href="javascript:;"><i class="ui-icon f-grid-cell-iconfont f-icon-edit">更改</i></a>';
+        }
+
+
+        F.ready(function () {
+
+            var mainGrid = F.ui.mainGrid;
+
+            mainGrid.el.on('click', 'a.mainGrid-detail', function (event) {
+                var cnode = $(this);
+                var rowData = mainGrid.getRowData(cnode.closest('.f-grid-row'));
+                var column = mainGrid.getColumn(cnode.parents('.f-grid-cell'));
+                F.ui.winDetail.show(
+                    '@Url.Content("~/Manage/ProjectDetail")' + '?ID=' + rowData.id, rowData.text + '的详细信息'
+                    );
+
+            })
+
+            mainGrid.el.on('click', 'a.mainGrid-edit', function (event) {
+                var cnode = $(this);
+                var rowData = mainGrid.getRowData(cnode.closest('.f-grid-row'));
+                var column = mainGrid.getColumn(cnode.parents('.f-grid-cell'));
+                F.ui.winEdit.show(
+                    '@Url.Content("~/Manage/EditProject")' + '?ID=' + rowData.id, '修改' + rowData.text 
+                    );
+
+            })
+
+            mainGrid.el.on('click', 'a.mainGrid-remove', function (event) {
+                var cnode = $(this);
+
+                F.confirm({
+                    message: '你确定要这么做吗？',
+                    target: '_top',
+                    ok: function () {
+                        var rowData = mainGrid.getRowData(cnode.closest('.f-grid-row'));
+                        var column = mainGrid.getColumn(cnode.parents('.f-grid-cell'));
+
+                        // 触发后台事件
+                        F.doPostBack('@Url.Action("DeleteProject")', {
+                            ID : rowData.id
+                            //rowText: rowData.text,
+                            //rowIndex: rowData.index,
+                            //columnIndex: column.index
+                        });
+
+                    }
+                });
+            });
+
+        });
+
+
+</script>
+
+}
